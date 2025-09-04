@@ -1,3 +1,4 @@
+import 'package:chef_app/pages/orders/runningOrders.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,11 +16,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, top: 15),
+      body: Padding(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 15),
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          clipBehavior: Clip.none,
           child: Column(
-            spacing: 20,
+            spacing: 15,
             children: [
               Row(
                 children: [
@@ -38,7 +41,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 30),
+                  SizedBox(width: 25),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -81,44 +84,49 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   spacing: 15,
                   children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 22,
-                        vertical: 20,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 4,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "20",
-                            style: TextStyle(
-                              fontSize: 52.32,
-                              color: Color(0XFB32343E),
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0,
+                    GestureDetector(
+                      onTap: () {
+                        _showBottomSheet(context);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 22,
+                          vertical: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 4,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
-                          Text(
-                            "RUNNING ORDERS",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                              color: Color(0XFB838799),
-                              letterSpacing: 0,
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "20",
+                              style: TextStyle(
+                                fontSize: 52.32,
+                                color: Color(0XFB32343E),
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0,
+                              ),
                             ),
-                          ),
-                        ],
+                            Text(
+                              "RUNNING ORDERS",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                                color: Color(0XFB838799),
+                                letterSpacing: 0,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Container(
@@ -259,7 +267,6 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
                       Container(
                         height: 140,
                         child: LineChart(
@@ -465,4 +472,29 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+void _showBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    enableDrag: true,
+    showDragHandle: true,
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+    ),
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.7,
+        // 70% of screen height
+        minChildSize: 0.3,
+        maxChildSize: 0.95,
+        // almost full screen
+        builder: (BuildContext context, ScrollController scrollController) {
+          return RunningOrders();
+        },
+      );
+    },
+  );
 }
