@@ -15,28 +15,28 @@ class _RunningOrdersState extends State<RunningOrders> {
     ["Breakfast", "Chicken Thai Biriyani", "12", 60],
     ["Breakfast", "Chicken Thai Biriyani", "12", 60],
     ["Breakfast", "Chicken Thai Biriyani", "12", 60],
+    ["Breakfast", "Chicken Thai Biriyani", "12", 60],
   ];
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "20 Running Orders",
-              style: TextStyle(
-                color: Color(0XFB181C2E),
-                fontSize: 17,
-                height: 1.3,
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "${orderItems.length.toString()} Running Orders",
+            style: TextStyle(
+              color: Color(0XFB181C2E),
+              fontSize: 17,
+              height: 1.3,
             ),
-            SizedBox(height: 20),
-            ListView.builder(
+          ),
+          SizedBox(height: 20),
+          Expanded(
+            child: ListView.builder(
               shrinkWrap: true,
-              primary: true,
               scrollDirection: Axis.vertical,
               itemCount: orderItems.length,
               itemBuilder: (context, index) {
@@ -48,8 +48,8 @@ class _RunningOrdersState extends State<RunningOrders> {
                 );
               },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

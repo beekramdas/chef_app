@@ -1,3 +1,7 @@
+import 'package:chef_app/pages/food/allFoodTab.dart' show AllFoodTab;
+import 'package:chef_app/pages/food/breakfastTab.dart';
+import 'package:chef_app/pages/food/dinnerTab.dart';
+import 'package:chef_app/pages/food/lunchTab.dart';
 import 'package:flutter/material.dart';
 
 class MyFoodList extends StatefulWidget {
@@ -10,6 +14,70 @@ class MyFoodList extends StatefulWidget {
 class _MyFoodListState extends State<MyFoodList> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text("MY Food List Page")));
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
+      body: DefaultTabController(
+        length: 4,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Column(
+            spacing: 20,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    height: 45,
+                    width: 45,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0XFBECF0F4),
+                    ),
+                    child: Icon(Icons.arrow_back_ios_new_rounded, size: 16),
+                  ),
+                  SizedBox(width: 16),
+                  Text(
+                    "My Food List",
+                    style: TextStyle(fontSize: 22, color: Color(0XFB181C2E)),
+                  ),
+                ],
+              ),
+
+              TabBar(
+                labelPadding: EdgeInsets.symmetric(horizontal: 22),
+                indicatorWeight: 2.5,
+                tabAlignment: TabAlignment.start,
+                indicatorColor: Color(0XFBFB6D3A),
+                indicatorPadding: EdgeInsets.only(top: 15),
+                enableFeedback: true,
+                dividerColor: Colors.transparent,
+                isScrollable: true,
+                indicatorSize: TabBarIndicatorSize.tab,
+                unselectedLabelColor: Color(0XFB32343E),
+                labelColor: Color(0XFBFB6D3A),
+                labelStyle: TextStyle(fontSize: 14),
+                tabs: [
+                  Tab(child: Text("All")),
+                  Tab(child: Text("Breakfast")),
+                  Tab(child: Text("Lunch")),
+                  Tab(child: Text("Dinner")),
+                ],
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    AllFoodTab(),
+                    BreakfastTab(),
+                    LunchTab(),
+                    DinnerTab(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

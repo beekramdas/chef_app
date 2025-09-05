@@ -24,6 +24,7 @@ class _RunningOrderTileState extends State<RunningOrderTile> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
+        spacing: 20,
         children: [
           Container(
             height: 102,
@@ -34,6 +35,8 @@ class _RunningOrderTileState extends State<RunningOrderTile> {
             ),
           ),
           Column(
+            spacing: 5,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "#${widget.foodTag}",
@@ -52,14 +55,15 @@ class _RunningOrderTileState extends State<RunningOrderTile> {
                 style: TextStyle(color: Color(0XFB9C9BA6), fontSize: 14),
               ),
               Row(
+                spacing: 5,
                 children: [
                   Text(
                     "\$${widget.price}",
                     style: TextStyle(fontSize: 18, color: Color(0XFB32343E)),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 18),
                   Container(
-                    height: 36,
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(9),
                       color: Color(0XFbFF7622),
@@ -71,7 +75,7 @@ class _RunningOrderTileState extends State<RunningOrderTile> {
                   ),
                   SizedBox(width: 5),
                   Container(
-                    height: 36,
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(9),
                       border: Border.all(color: Color(0XFBFF3326), width: 1),
