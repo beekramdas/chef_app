@@ -16,7 +16,35 @@ class _MyFoodListState extends State<MyFoodList> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
+      appBar: AppBar(
+        leadingWidth: double.maxFinite,
+        backgroundColor: Colors.white,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 15),
+          child: Row(
+            spacing: 15,
+            children: [
+              Container(
+                height: 45,
+                width: 45,
+                decoration: BoxDecoration(
+                  color: Color(0XFBECF0F4),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.arrow_back_ios_new, size: 17),
+              ),
+              Text(
+                "My Food List",
+                style: TextStyle(
+                  fontSize: 17,
+                  color: Color(0XFB32343E),
+                  height: 1.29,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: DefaultTabController(
         length: 4,
         child: Padding(
@@ -25,25 +53,6 @@ class _MyFoodListState extends State<MyFoodList> {
             spacing: 20,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    height: 45,
-                    width: 45,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0XFBECF0F4),
-                    ),
-                    child: Icon(Icons.arrow_back_ios_new_rounded, size: 16),
-                  ),
-                  SizedBox(width: 16),
-                  Text(
-                    "My Food List",
-                    style: TextStyle(fontSize: 22, color: Color(0XFB181C2E)),
-                  ),
-                ],
-              ),
-
               TabBar(
                 labelPadding: EdgeInsets.symmetric(horizontal: 22),
                 indicatorWeight: 2.5,

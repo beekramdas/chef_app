@@ -26,14 +26,6 @@ class _AddFoodState extends State<AddFood> {
     ["assets/ingredients/pappers.png", "Pappers"],
   ];
 
-  // final List<Map<String, dynamic>> ingredients = [
-  //   {"name": "Salt", "ingPath": "assets/ingredients/salt.png"},//
-  //   {"name": "Chicken", "ingPath": "assets/ingredients/chicken.png"},
-  //   {"name": "Onion", "ingPath": "assets/ingredients/onion.png"},
-  //   {"name": "Garlic", "ingPath": "assets/ingredients/garlic.png"},
-  //   {"name": "Ginger", "ingPath": "assets/ingredients/ginger.png"},
-  //   {"name": "Peppers", "ingPath": "assets/ingredients/pappers.png"},
-  // ];
   final Set<int> selectedIndexes = {};
   bool showAllIngredients = false;
 
@@ -46,9 +38,10 @@ class _AddFoodState extends State<AddFood> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         elevation: 0,
         leadingWidth: double.maxFinite,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         leading: Padding(
           padding: const EdgeInsets.only(left: 15),
           child: Row(
@@ -85,6 +78,8 @@ class _AddFoodState extends State<AddFood> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             spacing: 18,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +240,6 @@ class _AddFoodState extends State<AddFood> {
                 ],
               ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 7,
                 children: [
                   Text(
@@ -257,14 +251,14 @@ class _AddFoodState extends State<AddFood> {
                     ),
                   ),
                   Row(
-                    mainAxisSize: MainAxisSize.min,
+                    spacing: 18,
                     children: [
                       Expanded(
                         child: TextField(
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 20,
-                              horizontal: 10,
+                              horizontal: 5,
                             ),
                             hintText: "\$50",
                             hintStyle: TextStyle(
@@ -283,76 +277,83 @@ class _AddFoodState extends State<AddFood> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 25),
                       GestureDetector(
-                        behavior: HitTestBehavior.opaque,
                         onTap: () {
                           setState(() {
                             pickup = !pickup;
                             print(pickup);
                           });
                         },
-                        child: Container(
-                          height: 19,
-                          width: 19,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Color(0xFFFB6D3A),
-                              width: 1,
+                        child: Row(
+                          spacing: 7,
+                          children: [
+                            Container(
+                              height: 19,
+                              width: 19,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Color(0xFFFB6D3A),
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: pickup
+                                  ? Center(
+                                      child: Icon(
+                                        Icons.check,
+                                        size: 18,
+                                        color: Color(0xFFFB6D3A),
+                                      ),
+                                    )
+                                  : null,
                             ),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: pickup
-                              ? Center(
-                                  child: Icon(
-                                    Icons.check,
-                                    size: 18,
-                                    color: Color(0xFFFB6D3A),
-                                  ),
-                                )
-                              : null,
+
+                            Text(
+                              "Pick up",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0XFB9C9BA6),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(width: 5),
-                      Text(
-                        "Pick up",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Color(0XFB9C9BA6),
-                        ),
-                      ),
-                      SizedBox(width: 18),
                       GestureDetector(
                         onTap: () => setState(() => delivery = !delivery),
-                        child: Container(
-                          height: 19,
-                          width: 19,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Color(0xFFFB6D3A),
-                              width: 1,
+                        child: Row(
+                          spacing: 7,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              height: 19,
+                              width: 19,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Color(0xFFFB6D3A),
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: delivery
+                                  ? Center(
+                                      child: Icon(
+                                        Icons.check,
+                                        size: 18,
+                                        color: Color(0xFFFB6D3A),
+                                      ),
+                                    )
+                                  : null,
                             ),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: delivery
-                              ? Center(
-                                  child: Icon(
-                                    Icons.check,
-                                    size: 18,
-                                    color: Color(0xFFFB6D3A),
-                                  ),
-                                )
-                              : null,
-                        ),
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        "Delivery",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Color(0XFB9C9BA6),
+                            Text(
+                              "Delivery",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0XFB9C9BA6),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -446,12 +447,65 @@ class _AddFoodState extends State<AddFood> {
                   ),
                 ],
               ),
-              Text(
-                "DETAILS",
-                style: TextStyle(
-                  color: Color(0XFB32343E),
-                  letterSpacing: 2,
-                  fontSize: 13,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  Text(
+                    "DETAILS",
+                    style: TextStyle(
+                      color: Color(0XFB32343E),
+                      letterSpacing: 2,
+                      fontSize: 13,
+                    ),
+                  ),
+                  TextField(
+                    maxLines: 4,
+                    // you can change height by increasing/decreasing this
+                    decoration: InputDecoration(
+                      hintText:
+                          "Lorem ipsum dolor sit amet, consectetur adips cing elit. Bibendum in vel, mattis et amet dui mauris turpis.",
+                      hintStyle: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFB6B6E82),
+                        letterSpacing: 2,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(13),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: const BorderSide(
+                          color: Color(0xFBE8EAED),
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFFB6D3A), // highlight on focus
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Container(
+                  height: 62,
+                  width: double.maxFinite,
+                  decoration: BoxDecoration(
+                    color: Color(0XFBFF7622),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "SAVE CHANGES",
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ),
                 ),
               ),
             ],

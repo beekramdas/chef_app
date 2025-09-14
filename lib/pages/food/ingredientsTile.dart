@@ -45,6 +45,5 @@ class _IngredientsTileState extends State<IngredientsTile> {
         Text(widget.ingredientsName),
       ],
     );
-    ;
   }
 }
