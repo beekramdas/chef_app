@@ -49,6 +49,7 @@ dev_dependencies:
   fl_chart: ^0.67.0
   mobkit_dashed_border: ^0.0.8 #For dashed border outside container
   smooth_page_indicator: ^1.2.1
+  google_fonts: ^6.3.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

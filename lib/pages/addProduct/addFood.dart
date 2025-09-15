@@ -414,7 +414,7 @@ class _AddFoodState extends State<AddFood> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Wrap(
-                      spacing: 14,
+                      spacing: 10,
                       runSpacing: 10,
                       children: List.generate(ingredientsToShow.length, (
                         index,
