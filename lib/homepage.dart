@@ -1,3 +1,5 @@
+import 'package:chef_app/pages/menu/mainMenu.dart';
+import 'package:chef_app/pages/menu/userReviews.dart';
 import 'package:chef_app/pages/orders/runningOrders.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -26,18 +28,26 @@ class _HomePageState extends State<HomePage> {
             children: [
               Row(
                 children: [
-                  Container(
-                    height: 45,
-                    width: 45,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        "assets/menu/Menu.svg",
-                        height: 16,
-                        width: 12,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MainMenu()),
+                      );
+                    },
+                    child: Container(
+                      height: 45,
+                      width: 45,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          "assets/menu/Menu.svg",
+                          height: 16,
+                          width: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -430,13 +440,23 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Reviews", style: TextStyle(fontSize: 14)),
-                        Text(
-                          "See All Reviews",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0XFBFB6D3A),
-                            decoration: TextDecoration.underline,
-                            decorationColor: Color(0XFBFB6D3A),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UserReviews(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "See All Reviews",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0XFBFB6D3A),
+                              decoration: TextDecoration.underline,
+                              decorationColor: Color(0XFBFB6D3A),
+                            ),
                           ),
                         ),
                       ],
