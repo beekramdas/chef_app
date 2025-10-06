@@ -1,4 +1,11 @@
+import 'dart:io';
+
+import 'package:chef_app/indexPage.dart';
 import 'package:chef_app/pages/food/ingredientsTile.dart';
+import 'package:chef_app/repositories/product_repositoriy.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobkit_dashed_border/mobkit_dashed_border.dart';
@@ -25,9 +32,52 @@ class _AddFoodState extends State<AddFood> {
     ["assets/ingredients/onion.png", "Onion"],
     ["assets/ingredients/pappers.png", "Pappers"],
   ];
-
   final Set<int> selectedIndexes = {};
   bool showAllIngredients = false;
+  final List<File> _selectedFiles = [];
+  late final ProductRepository productRepository;
+  bool _isUploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    productRepository = ProductRepository(
+      firebaseFirestore: FirebaseFirestore.instance,
+      firebaseStorage: FirebaseStorage.instance,
+    );
+  }
+
+  Future<void> pickMedia() async {
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'mp4', 'mov', 'avi'],
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedFiles.addAll(result.paths.map((path) => File(path!)).toList());
+      });
+    }
+  }
+
+  Future<void> uploadFiles() async {
+    if (_selectedFiles.isEmpty) return;
+    setState(() => _isUploading = true);
+    try {
+      final urls = await productRepository.uploadMultipleFiles(_selectedFiles);
+      print("Uploaded URLs: $urls");
+    } catch (e) {
+      print("Upload failed: $e");
+    } finally {
+      setState(() => _isUploading = false);
+    }
+  }
+
+  bool _isImage(File file) {
+    final ext = file.path.split('.').last.toLowerCase();
+    return ['jpg', 'jpeg', 'png'].contains(ext);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,14 +97,22 @@ class _AddFoodState extends State<AddFood> {
           child: Row(
             spacing: 10,
             children: [
-              Container(
-                height: 45,
-                width: 45,
-                decoration: BoxDecoration(
-                  color: Color(0XFBECF0F4),
-                  shape: BoxShape.circle,
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => IndexPage()),
+                  );
+                },
+                child: Container(
+                  height: 45,
+                  width: 45,
+                  decoration: BoxDecoration(
+                    color: Color(0XFBECF0F4),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.arrow_back_ios_new, size: 17),
                 ),
-                child: Icon(Icons.arrow_back_ios_new, size: 17),
               ),
               Text(
                 "Add New Items",
@@ -138,102 +196,124 @@ class _AddFoodState extends State<AddFood> {
                     child: Row(
                       spacing: 30,
                       children: [
-                        Container(
-                          height: 101,
-                          width: 111,
-                          decoration: BoxDecoration(
-                            color: Color(0XFB98A8B8),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 14,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: DashedBorder.fromBorderSide(
-                              side: BorderSide(
-                                color: Color(0XFBE8EAED),
-                                width: 1.5,
+                        GestureDetector(
+                          onTap: pickMedia,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: DashedBorder.fromBorderSide(
+                                side: BorderSide(
+                                  color: Color(0XFBE8EAED),
+                                  width: 1.5,
+                                ),
+                                dashLength: 9.0,
                               ),
-                              dashLength: 9.0,
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 13,
+                                    vertical: 8,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 22,
+                                    vertical: 17,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Color(
+                                      0XFB523BB1,
+                                    ).withValues(alpha: 0.10),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: SvgPicture.asset("assets/upload.svg"),
+                                ),
+                                Text(
+                                  "Add",
+                                  style: TextStyle(
+                                    color: Color(0XFB9C9BA6),
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 13,
-                                  vertical: 8,
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 22,
-                                  vertical: 17,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Color(
-                                    0XFB523BB1,
-                                  ).withValues(alpha: 0.10),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: SvgPicture.asset("assets/upload.svg"),
-                              ),
-                              Text(
-                                "Add",
-                                style: TextStyle(
-                                  color: Color(0XFB9C9BA6),
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 14,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: DashedBorder.fromBorderSide(
-                              side: BorderSide(
-                                color: Color(0XFBE8EAED),
-                                width: 1.5,
+                        _selectedFiles.isEmpty
+                            ? Text("No files uploaded")
+                            : SizedBox(
+                                height: 101,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _selectedFiles.length,
+                                  itemBuilder: (context, index) {
+                                    final file = _selectedFiles[index];
+                                    final isImage = _isImage(file);
+
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Stack(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                            child: isImage
+                                                ? Image.file(
+                                                    file,
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Container(
+                                                    width: 100,
+                                                    height: 100,
+                                                    color: Colors.black12,
+                                                    child: const Icon(
+                                                      Icons.videocam,
+                                                      size: 40,
+                                                    ),
+                                                  ),
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _selectedFiles.removeAt(
+                                                    index,
+                                                  );
+                                                });
+                                              },
+                                              child: Container(
+                                                height: 22,
+                                                width: 22,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red.withValues(
+                                                    alpha: 1,
+                                                  ),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  size: 14,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
-                              dashLength: 9.0,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 13,
-                                  vertical: 8,
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 22,
-                                  vertical: 17,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Color(
-                                    0XFB523BB1,
-                                  ).withValues(alpha: 0.10),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: SvgPicture.asset("assets/upload.svg"),
-                              ),
-                              Text(
-                                "Add",
-                                style: TextStyle(
-                                  color: Color(0XFB9C9BA6),
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ),
