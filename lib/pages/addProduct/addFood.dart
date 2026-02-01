@@ -2,13 +2,15 @@ import 'dart:io';
 
 import 'package:chef_app/indexPage.dart';
 import 'package:chef_app/pages/food/ingredientsTile.dart';
-import 'package:chef_app/repositories/product_repositoriy.dart';
+import 'package:chef_app/repositories/product_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobkit_dashed_border/mobkit_dashed_border.dart';
+
+import '../../models/productModel.dart';
 
 class AddFood extends StatefulWidget {
   const AddFood({super.key});
@@ -21,6 +23,9 @@ class _AddFoodState extends State<AddFood> {
   late bool pickup = false;
   late bool delivery = false;
   int? ingredientsIndex;
+  final TextEditingController _foodNameController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
 
   List foodIngredients = [
     ["assets/ingredients/salt.png", "Salt"],
@@ -53,7 +58,6 @@ class _AddFoodState extends State<AddFood> {
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png', 'mp4', 'mov', 'avi'],
     );
-
     if (result != null) {
       setState(() {
         _selectedFiles.addAll(result.paths.map((path) => File(path!)).toList());
@@ -61,22 +65,69 @@ class _AddFoodState extends State<AddFood> {
     }
   }
 
-  Future<void> uploadFiles() async {
-    if (_selectedFiles.isEmpty) return;
-    setState(() => _isUploading = true);
-    try {
-      final urls = await productRepository.uploadMultipleFiles(_selectedFiles);
-      print("Uploaded URLs: $urls");
-    } catch (e) {
-      print("Upload failed: $e");
-    } finally {
-      setState(() => _isUploading = false);
+  Future<void> _saveProduct() async {
+    if (_foodNameController.text.isEmpty ||
+        _priceController.text.isEmpty ||
+        _descController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("⚠️ Please fill all fields")));
+      return;
     }
-  }
 
-  bool _isImage(File file) {
-    final ext = file.path.split('.').last.toLowerCase();
-    return ['jpg', 'jpeg', 'png'].contains(ext);
+    if (_selectedFiles.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("⚠️ Please upload at least one image/video")),
+      );
+      return;
+    }
+
+    setState(() => _isUploading = true);
+
+    try {
+      // ✅ Upload images/videos
+      final imageUrls = await productRepository.uploadMultipleFiles(
+        _selectedFiles,
+      );
+
+      // ✅ Get selected ingredients
+      final selectedIngredients = selectedIndexes
+          .map((index) => foodIngredients[index][1].toString())
+          .toList();
+
+      // ✅ Create Product object using your model
+      final product = Product(
+        productName: _foodNameController.text.trim(),
+        productImages: imageUrls,
+        productPrice: int.parse(_priceController.text.trim()),
+        ingredients: selectedIngredients,
+        productDesc: _descController.text.trim(),
+        productRating: 0.0,
+        // default rating
+        pickup: pickup,
+        delivery: delivery,
+      );
+
+      // ✅ Save to Firestore
+      await productRepository.addProduct(product);
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("✅ Product added successfully")));
+
+      // ✅ Clear form
+      _foodNameController.clear();
+      _priceController.clear();
+      _descController.clear();
+      _selectedFiles.clear();
+      selectedIndexes.clear();
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("❌ Error: $e")));
+    }
+
+    setState(() => _isUploading = false);
   }
 
   @override
@@ -84,7 +135,6 @@ class _AddFoodState extends State<AddFood> {
     final ingredientsToShow = showAllIngredients
         ? foodIngredients
         : foodIngredients.take(6).toList();
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -156,6 +206,7 @@ class _AddFoodState extends State<AddFood> {
                     ),
                   ),
                   TextField(
+                    controller: _foodNameController,
                     decoration: InputDecoration(
                       filled: true,
                       focusedBorder: OutlineInputBorder(
@@ -253,7 +304,9 @@ class _AddFoodState extends State<AddFood> {
                                   itemCount: _selectedFiles.length,
                                   itemBuilder: (context, index) {
                                     final file = _selectedFiles[index];
-                                    final isImage = _isImage(file);
+                                    final isImage = productRepository.isImage(
+                                      file,
+                                    );
 
                                     return Padding(
                                       padding: const EdgeInsets.only(right: 10),
@@ -335,6 +388,7 @@ class _AddFoodState extends State<AddFood> {
                     children: [
                       Expanded(
                         child: TextField(
+                          controller: _priceController,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 20,
@@ -517,7 +571,7 @@ class _AddFoodState extends State<AddFood> {
                             });
                           },
                           child: IngredientsTile(
-                            ingredientsPath: ingredientsToShow[index][0],
+                            ingredientsImgPath: ingredientsToShow[index][0],
                             ingredientsName: ingredientsToShow[index][1],
                             selectedIngredients: isSelected,
                           ),
@@ -540,6 +594,7 @@ class _AddFoodState extends State<AddFood> {
                     ),
                   ),
                   TextField(
+                    controller: _descController,
                     maxLines: 4,
                     // you can change height by increasing/decreasing this
                     decoration: InputDecoration(
@@ -573,17 +628,20 @@ class _AddFoodState extends State<AddFood> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Container(
-                  height: 62,
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(
-                    color: Color(0XFBFF7622),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "SAVE CHANGES",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                child: GestureDetector(
+                  onTap: _saveProduct,
+                  child: Container(
+                    height: 62,
+                    width: double.maxFinite,
+                    decoration: BoxDecoration(
+                      color: Color(0XFBFF7622),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "SAVE CHANGES",
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
                     ),
                   ),
                 ),

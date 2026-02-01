@@ -1,5 +1,5 @@
 import 'package:chef_app/indexPage.dart';
-import 'package:chef_app/repositories/product_repositoriy.dart';
+import 'package:chef_app/repositories/product_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';

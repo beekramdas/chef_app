@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class IngredientsTile extends StatefulWidget {
-  final String ingredientsPath;
+  final String ingredientsImgPath;
   final String ingredientsName;
   final bool selectedIngredients;
 
   IngredientsTile({
     super.key,
-    required this.ingredientsPath,
+    required this.ingredientsImgPath,
     required this.ingredientsName,
     required this.selectedIngredients,
   });
@@ -35,7 +35,7 @@ class _IngredientsTileState extends State<IngredientsTile> {
             shape: BoxShape.circle,
           ),
           child: Image.asset(
-            widget.ingredientsPath,
+            widget.ingredientsImgPath,
             color: widget.selectedIngredients
                 ? Color(0XFBFB6D3A)
                 : Color(0XFB32343E),
