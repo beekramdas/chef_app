@@ -1,3 +1,4 @@
+import 'package:chef_app/cubits/product_cubit.dart';
 import 'package:chef_app/indexPage.dart';
 import 'package:chef_app/repositories/product_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,30 +32,41 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          bottomSheetTheme: BottomSheetThemeData(
-            dragHandleColor: Color(0XFBC1C8D2),
-            showDragHandle: true,
-            dragHandleSize: Size(60, 6),
-          ),
-          scaffoldBackgroundColor: Colors.white,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-          appBarTheme: AppBarTheme(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: Colors.white,
-              statusBarIconBrightness: Brightness.dark,
-              statusBarBrightness: Brightness.light,
-            ),
-          ),
-          textTheme: GoogleFonts.senTextTheme(),
+      child: RepositoryProvider(
+        create: (context) => ProductRepository(
+          firebaseFirestore: FirebaseFirestore.instance,
+          firebaseStorage: FirebaseStorage.instance,
         ),
-        home: IndexPage(),
+        child: BlocProvider(
+          create: (context) => ProductCubit(
+            productRepository: context.read<ProductRepository>(),
+          ),
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              bottomSheetTheme: BottomSheetThemeData(
+                dragHandleColor: Color(0XFBC1C8D2),
+                showDragHandle: true,
+                dragHandleSize: Size(60, 6),
+              ),
+              scaffoldBackgroundColor: Colors.white,
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+              appBarTheme: AppBarTheme(
+                backgroundColor: Colors.white,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Colors.white,
+                  statusBarIconBrightness: Brightness.dark,
+                  statusBarBrightness: Brightness.light,
+                ),
+              ),
+              textTheme: GoogleFonts.senTextTheme(),
+            ),
+            home: IndexPage(),
+          ),
+        ),
       ),
     );
   }
