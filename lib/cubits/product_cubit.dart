@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -9,6 +10,8 @@ part 'product_state.dart';
 
 class ProductCubit extends Cubit<ProductState> {
   final ProductRepository productRepository;
+
+  StreamSubscription<List<Product>>? _streamSubscription;
 
   ProductCubit({required this.productRepository})
     : super(ProductState.initial());
@@ -71,5 +74,29 @@ class ProductCubit extends Cubit<ProductState> {
 
   void resetState() {
     emit(ProductState.initial());
+  }
+
+  StreamSubscription<List<Product>>? _productsSubscription;
+
+  void loadProducts() {
+    emit(state.copyWith(isLoading: true));
+
+    _productsSubscription?.cancel();
+
+    _productsSubscription = productRepository.getProducts().listen(
+      (products) {
+        emit(state.copyWith(products: products, isLoading: false));
+      },
+      onError: (error) {
+        emit(state.copyWith(isLoading: false));
+        print("Error loading products: $error");
+      },
+    );
+  }
+
+  @override
+  Future<void> close() {
+    _productsSubscription?.cancel();
+    return super.close();
   }
 }

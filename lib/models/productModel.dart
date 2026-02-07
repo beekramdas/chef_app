@@ -21,6 +21,28 @@ class Product {
     this.delivery = false,
   });
 
+  factory Product.fromMap(Map<String, dynamic> map) {
+    return Product(
+      id: map['id'] ?? '',
+
+      productName: map['productName'] ?? '',
+
+      productImages: List<String>.from(map['productImages'] ?? []),
+
+      productPrice: map['productPrice'] ?? 0,
+
+      ingredients: List<String>.from(map['ingredients'] ?? []),
+
+      productDesc: map['productDesc'] ?? '',
+
+      productRating: (map['productRating'] as num?)?.toDouble() ?? 0.0,
+
+      pickup: map['pickup'] ?? false,
+
+      delivery: map['delivery'] ?? false,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
@@ -35,18 +57,11 @@ class Product {
     };
   }
 
-  factory Product.fromMap(Map<String, dynamic> map) {
-    return Product(
-      id: map['id'] as String,
-      productName: map['productName'] as String,
-      productImages: map['productImages'] as List<String>,
-      productPrice: map['productPrice'] as int,
-      ingredients: map['ingredients'] as List<String>,
-      productDesc: map['productDesc'] as String,
-      productRating: map['productRating'] as double,
-      pickup: map['pickup'] as bool,
-      delivery: map['delivery'] as bool,
-    );
+  //
+
+  @override
+  String toString() {
+    return 'Product{id: $id, productName: $productName, productImages: $productImages, productPrice: $productPrice, ingredients: $ingredients, productDesc: $productDesc, productRating: $productRating, pickup: $pickup, delivery: $delivery}';
   }
 
   Product copyWith({

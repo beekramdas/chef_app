@@ -67,4 +67,12 @@ class ProductRepository {
     final ext = file.path.split('.').last.toLowerCase();
     return ['jpg', 'jpeg', 'png'].contains(ext);
   }
+
+  Stream<List<Product>> getProducts() {
+    return productRef.snapshots().map(
+      (snapshot) => snapshot.docs.map((doc) {
+        return Product.fromMap({...doc.data(), "id": doc.id});
+      }).toList(),
+    );
+  }
 }

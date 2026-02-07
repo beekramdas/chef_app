@@ -42,6 +42,7 @@ class _AddFoodState extends State<AddFood> {
   final List<File> _selectedFiles = [];
   late final ProductRepository productRepository;
   bool _isUploading = false;
+  bool formReset = false;
 
   @override
   void initState() {
@@ -139,13 +140,15 @@ class _AddFoodState extends State<AddFood> {
       listener: (context, state) {
         if (state.isSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("✅✔️✔ Product Added Successfully.")),
+            SnackBar(content: Text("✅✔️ Product Added Successfully.")),
           );
           _foodNameController.clear();
           _priceController.clear();
           _descController.clear();
           _selectedFiles.clear();
           selectedIndexes.clear();
+          delivery = false;
+          pickup = false;
           setState(() {});
           context.read<ProductCubit>().resetState();
         }
@@ -198,9 +201,24 @@ class _AddFoodState extends State<AddFood> {
               ),
             ),
             actions: [
-              Text(
-                "RESET",
-                style: TextStyle(fontSize: 14, color: Color(0XFBFB6D3A)),
+              ///To reset form----------------------->
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _foodNameController.clear();
+                    _priceController.clear();
+                    _descController.clear();
+                    _selectedFiles.clear();
+                    selectedIndexes.clear();
+                    delivery = false;
+                    pickup = false;
+                    context.read<ProductCubit>().resetState();
+                  });
+                },
+                child: Text(
+                  "RESET",
+                  style: TextStyle(fontSize: 14, color: Color(0XFBFB6D3A)),
+                ),
               ),
               SizedBox(width: 15),
             ],
