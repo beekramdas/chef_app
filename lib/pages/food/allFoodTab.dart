@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chef_app/cubits/product_cubit.dart';
 import 'package:chef_app/pages/food/foodDetails.dart';
 import 'package:flutter/material.dart';
@@ -11,15 +12,6 @@ class AllFoodTab extends StatefulWidget {
 }
 
 class _AllFoodTabState extends State<AllFoodTab> {
-  // final List allFoodItems = [
-  //   ["Chicken Biryani", "Breakfast", 4.9, 60, "Pickup"],
-  //   ["Chicken Bhuna", "Lunch", 4.6, 30, "Delivery"],
-  //   ["Mazalichiken Halim", "Dinner", 4.0, 60, "Pickup"],
-  //   ["Mazalichiken Halim", "Dinner", 4.0, 60, "Pickup"],
-  //   ["Mazalichiken Halim", "Dinner", 4.0, 60, "Pickup"],
-  //   ["Mazalichiken Halim", "Dinner", 4.0, 60, "Pickup"],
-  // ];
-
   @override
   void initState() {
     super.initState();
@@ -57,7 +49,7 @@ class _AllFoodTabState extends State<AllFoodTab> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => FoodDetails(),
+                            builder: (context) => FoodDetails(product: product),
                           ),
                         );
                       },
@@ -65,12 +57,19 @@ class _AllFoodTabState extends State<AllFoodTab> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 22,
                         children: [
-                          Container(
+                          SizedBox(
                             height: 102,
                             width: 102,
-                            decoration: BoxDecoration(
+                            child: ClipRRect(
+                              child: CachedNetworkImage(
+                                imageUrl: product.productImages[0],
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                    Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
                               borderRadius: BorderRadius.circular(20),
-                              color: Color(0XFB98A8B8),
                             ),
                           ),
                           Column(

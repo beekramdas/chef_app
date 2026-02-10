@@ -1,9 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chef_app/models/productModel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class FoodDetails extends StatefulWidget {
-  const FoodDetails({super.key});
+  final Product product;
+
+  const FoodDetails({super.key, required this.product});
 
   @override
   State<FoodDetails> createState() => _FoodDetailsState();
@@ -12,25 +16,14 @@ class FoodDetails extends StatefulWidget {
 class _FoodDetailsState extends State<FoodDetails> {
   PageController foodImageController = PageController();
 
-  List foodImages = [
-    "assets/foods/food1.jpg",
-    "assets/foods/image2.jpg",
-    "assets/foods/image4.jpg",
-    "assets/foods/food1.jpg",
-    "assets/foods/image2.jpg",
-    "assets/foods/image4.jpg",
-  ];
-  List foodIngredients = [
-    ["assets/ingredients/salt.png", "Salt"],
-    ["assets/ingredients/chicken.png", "Chicken"],
-    ["assets/ingredients/onion.png", "Onion"],
-    ["assets/ingredients/garlic.png", "Garlic"],
-    ["assets/ingredients/pappers.png", "Pappers"],
-    ["assets/ingredients/ginger.png", "Ginger"],
-    ["assets/ingredients/onion.png", "Onion"],
-    ["assets/ingredients/pappers.png", "Pappers"],
-    ["assets/ingredients/ginger.png", "Ginger"],
-  ];
+  final Map<String, String> foodIngredientsImages = {
+    "Salt": "assets/ingredients/salt.png",
+    "Chicken": "assets/ingredients/chicken.png",
+    "Onion": "assets/ingredients/onion.png",
+    "Garlic": "assets/ingredients/garlic.png",
+    "Pappers": "assets/ingredients/pappers.png",
+    "Ginger": "assets/ingredients/ginger.png",
+  };
 
   @override
   void dispose() {
@@ -40,6 +33,7 @@ class _FoodDetailsState extends State<FoodDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final product = widget.product;
     return Scaffold(
       appBar: AppBar(
         leadingWidth: double.maxFinite,
@@ -101,13 +95,13 @@ class _FoodDetailsState extends State<FoodDetails> {
                     child: PageView.builder(
                       scrollDirection: Axis.horizontal,
                       controller: foodImageController,
-                      itemCount: foodImages.length,
+                      itemCount: product.productImages.length,
                       itemBuilder: (context, index) {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: Image.asset(
-                            foodImages[index],
-                            fit: BoxFit.fill,
+                          child: CachedNetworkImage(
+                            imageUrl: product.productImages[index],
+                            fit: BoxFit.cover,
                           ),
                         );
                       },
@@ -142,7 +136,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                           ),
                           SmoothPageIndicator(
                             controller: foodImageController,
-                            count: foodImages.length,
+                            count: product.productImages.length,
                             effect: ExpandingDotsEffect(
                               dotHeight: 10,
                               dotWidth: 10,
@@ -161,7 +155,11 @@ class _FoodDetailsState extends State<FoodDetails> {
                               color: Colors.white.withValues(alpha: 0.8),
                             ),
                             child: Text(
-                              "Delivery",
+                              product.delivery
+                                  ? "Delivery"
+                                  : product.pickup
+                                  ? "Pickup"
+                                  : "",
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Color(0XFB32343E),
@@ -180,7 +178,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Chicken Thai Biriyani",
+                      product.productName,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -188,7 +186,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                       ),
                     ),
                     Text(
-                      "\$60",
+                      "\$${product.productPrice}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -220,7 +218,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: Text(
-                      "4.9",
+                      product.productRating.toString(),
                       style: TextStyle(
                         fontSize: 14,
                         color: Color(0XFBFB6D3A),
@@ -245,6 +243,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                   style: TextStyle(fontSize: 14, color: Color(0XFB32343E)),
                 ),
               ),
+              const SizedBox(height: 10),
               Container(
                 height: 190,
                 child: GridView.builder(
@@ -253,8 +252,12 @@ class _FoodDetailsState extends State<FoodDetails> {
                     crossAxisSpacing: 10,
                     childAspectRatio: 0.5,
                   ),
-                  itemCount: foodIngredients.length,
+                  itemCount: product.ingredients.length,
                   itemBuilder: (context, index) {
+                    final ingredient = product.ingredients[index];
+                    final imgPath =
+                        foodIngredientsImages[ingredient] ??
+                        "assets/ingredients/salt.png";
                     return Column(
                       children: [
                         Container(
@@ -263,13 +266,10 @@ class _FoodDetailsState extends State<FoodDetails> {
                             color: Color(0XFBFFEBE4),
                             shape: BoxShape.circle,
                           ),
-                          child: Image.asset(
-                            foodIngredients[index][0],
-                            color: Color(0XFBFB6D3A),
-                          ),
+                          child: Image.asset(imgPath, color: Color(0XFBFB6D3A)),
                         ),
                         Text(
-                          foodIngredients[index][1],
+                          ingredient,
                           style: TextStyle(
                             fontSize: 12,
                             color: Color(0XFB747783),
@@ -280,7 +280,8 @@ class _FoodDetailsState extends State<FoodDetails> {
                   },
                 ),
               ),
-              Divider(color: Color(0XFBF0F4F9)),
+
+              Divider(color: Color(0XFBF0F4F9), height: 30),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
@@ -289,7 +290,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                 ),
               ),
               Text(
-                "Lorem ipsum dolor sit amet, consetdur Maton adipiscing elit. Bibendum in vel, mattis et amet dui mauris turpis.",
+                product.productDesc,
                 style: TextStyle(fontSize: 13, color: Color(0XFB747783)),
               ),
             ],
