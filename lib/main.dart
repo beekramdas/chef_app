@@ -37,10 +37,14 @@ class MyApp extends StatelessWidget {
           firebaseFirestore: FirebaseFirestore.instance,
           firebaseStorage: FirebaseStorage.instance,
         ),
-        child: BlocProvider(
-          create: (context) => ProductCubit(
-            productRepository: context.read<ProductRepository>(),
-          ),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider<ProductCubit>(
+              create: (context) => ProductCubit(
+                productRepository: context.read<ProductRepository>(),
+              ),
+            ),
+          ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
