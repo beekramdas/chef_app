@@ -10,8 +10,7 @@ part 'product_state.dart';
 
 class ProductCubit extends Cubit<ProductState> {
   final ProductRepository productRepository;
-
-  StreamSubscription<List<Product>>? _streamSubscription;
+  StreamSubscription<List<Product>>? _productsSubscription;
 
   ProductCubit({required this.productRepository})
     : super(ProductState.initial());
@@ -75,8 +74,6 @@ class ProductCubit extends Cubit<ProductState> {
   void resetState() {
     emit(ProductState.initial());
   }
-
-  StreamSubscription<List<Product>>? _productsSubscription;
 
   void loadProducts() {
     emit(state.copyWith(isLoading: true));

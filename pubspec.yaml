@@ -61,6 +61,7 @@ dev_dependencies:
   flutter_bloc: ^9.1.1
   file_picker: ^10.3.3
   cached_network_image: ^3.4.1
+  validators: ^3.0.0
 
 
 # For information on the generic Dart part of this file, see the
@@ -80,6 +81,7 @@ flutter:
     - assets/
     - assets/ingredients/
     - assets/foods/
+    - assets/ui/
   # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

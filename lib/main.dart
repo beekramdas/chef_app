@@ -1,5 +1,5 @@
-import 'package:chef_app/cubits/product_cubit.dart';
-import 'package:chef_app/indexPage.dart';
+import 'package:chef_app/cubits/product//product_cubit.dart';
+import 'package:chef_app/registration/restaurant_register.dart';
 import 'package:chef_app/repositories/product_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
               ),
               textTheme: GoogleFonts.senTextTheme(),
             ),
-            home: IndexPage(),
+            home: RestaurantRegister(),
           ),
         ),
       ),

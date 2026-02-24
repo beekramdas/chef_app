@@ -23,7 +23,7 @@ class ProductRepository {
       await docRef.set(productWithId.toMap());
       print("Product added successfully with ID: ${docRef.id}");
     } catch (e) {
-      print("Error adding product: $e");
+      rethrow;
     }
   }
 
@@ -31,8 +31,11 @@ class ProductRepository {
   Future<List<String>> uploadMultipleFiles(List<File> files) async {
     List<String> downloadUrls = [];
     for (final file in files) {
-      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      final storageRef = firebaseStorage.ref().child("uploads/$fileName");
+      final fileName =
+          "${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}";
+      final storageRef = firebaseStorage.ref().child(
+        "uploads/products/$fileName",
+      );
       final uploadTask = await storageRef.putFile(file);
       final url = await uploadTask.ref.getDownloadURL();
       downloadUrls.add(url);
@@ -40,29 +43,6 @@ class ProductRepository {
     return downloadUrls;
   }
 
-  // ✅ Save product data
-  // Future<void> saveProductData({
-  //   required String name,
-  //   required String description,
-  //   required double price,
-  //   required List<String> mediaUrls,
-  //   required List<String> ingredients,
-  //   required bool pickup,
-  //   required bool delivery,
-  // }) async {
-  //   await firebaseFirestore.collection('products').add({
-  //     "name": name,
-  //     "description": description,
-  //     "price": price,
-  //     "media": mediaUrls,
-  //     "ingredients": ingredients,
-  //     "pickup": pickup,
-  //     "delivery": delivery,
-  //     "createdAt": FieldValue.serverTimestamp(),
-  //   });
-  // }
-
-  // ✅ Optional: Check if a file is image or video
   bool isImage(File file) {
     final ext = file.path.split('.').last.toLowerCase();
     return ['jpg', 'jpeg', 'png'].contains(ext);

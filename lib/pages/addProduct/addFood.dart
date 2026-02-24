@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:chef_app/cubits/product_cubit.dart';
+import 'package:chef_app/cubits/product/product_cubit.dart';
 import 'package:chef_app/indexPage.dart';
 import 'package:chef_app/pages/food/ingredientsTile.dart';
 import 'package:chef_app/repositories/product_repository.dart';
@@ -41,8 +41,6 @@ class _AddFoodState extends State<AddFood> {
   bool showAllIngredients = false;
   final List<File> _selectedFiles = [];
   late final ProductRepository productRepository;
-  bool _isUploading = false;
-  bool formReset = false;
 
   @override
   void initState() {
@@ -65,71 +63,6 @@ class _AddFoodState extends State<AddFood> {
       });
     }
   }
-
-  // Future<void> _saveProduct() async {
-  //   if (_foodNameController.text.isEmpty ||
-  //       _priceController.text.isEmpty ||
-  //       _descController.text.isEmpty) {
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text("⚠️ Please fill all fields")));
-  //     return;
-  //   }
-  //
-  //   if (_selectedFiles.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("⚠️ Please upload at least one image/video")),
-  //     );
-  //     return;
-  //   }
-  //
-  //   setState(() => _isUploading = true);
-  //
-  //   try {
-  //     // ✅ Upload images/videos
-  //     final imageUrls = await productRepository.uploadMultipleFiles(
-  //       _selectedFiles,
-  //     );
-  //
-  //     // ✅ Get selected ingredients
-  //     final selectedIngredients = selectedIndexes
-  //         .map((index) => foodIngredients[index][1].toString())
-  //         .toList();
-  //
-  //     // ✅ Create Product object using your model
-  //     final product = Product(
-  //       productName: _foodNameController.text.trim(),
-  //       productImages: imageUrls,
-  //       productPrice: int.parse(_priceController.text.trim()),
-  //       ingredients: selectedIngredients,
-  //       productDesc: _descController.text.trim(),
-  //       productRating: 0.0,
-  //       // default rating
-  //       pickup: pickup,
-  //       delivery: delivery,
-  //     );
-  //
-  //     // ✅ Save to Firestore
-  //     await productRepository.addProduct(product);
-  //
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text("✅ Product added successfully")));
-  //
-  //     // ✅ Clear form
-  //     _foodNameController.clear();
-  //     _priceController.clear();
-  //     _descController.clear();
-  //     _selectedFiles.clear();
-  //     selectedIndexes.clear();
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text("❌ Error: $e")));
-  //   }
-  //
-  //   setState(() => _isUploading = false);
-  // }
 
   @override
   Widget build(BuildContext context) {
