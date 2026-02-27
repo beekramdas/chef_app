@@ -88,7 +88,7 @@ class _AddFoodState extends State<AddFood> {
         if (state.errorMessage.isNotEmpty) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text("❌${state.errorMessage}")));
+          ).showSnackBar(SnackBar(content: Text("${state.errorMessage}")));
           context.read<ProductCubit>().resetState();
         }
       },
@@ -362,6 +362,7 @@ class _AddFoodState extends State<AddFood> {
                         children: [
                           Expanded(
                             child: TextField(
+                              keyboardType: TextInputType.number,
                               controller: _priceController,
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(

@@ -24,12 +24,12 @@ class AuthRepository {
       password: password,
     );
     final user = credential.user!;
-    final userModel = UserModelR(id: user.uid, name: name, email: email);
+    final userModelR = UserModelR(id: user.uid, name: name, email: email);
     await firebaseFirestore
         .collection("RestaurantUsers")
         .doc(user.uid)
-        .set(userModel.toMap());
-    return userModel;
+        .set(userModelR.toMap());
+    return userModelR;
   }
 
   Future<UserModelR> signIn({

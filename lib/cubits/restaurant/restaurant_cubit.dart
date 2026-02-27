@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -9,6 +10,8 @@ part 'restaurant_state.dart';
 
 class RestaurantCubit extends Cubit<RestaurantState> {
   final RestaurantRepository restaurantRepository;
+
+  StreamSubscription<RestaurantModel?>? _restaurantSubscription;
 
   RestaurantCubit({required this.restaurantRepository})
     : super(RestaurantState.initial());
@@ -36,7 +39,7 @@ class RestaurantCubit extends Cubit<RestaurantState> {
         state.copyWith(
           isSuccess: false,
           isLoading: false,
-          errMsg: "Please upload restaurant images",
+          errMsg: "Please upload at least one file",
         ),
       );
       return;
@@ -75,5 +78,40 @@ class RestaurantCubit extends Cubit<RestaurantState> {
         ),
       );
     }
+  }
+
+  /*
+  ==========================
+  GET RESTAURANT
+  ==========================
+   */
+
+  void getRestaurant(String userId) {
+    emit(state.copyWith(isLoading: true));
+
+    _restaurantSubscription?.cancel();
+
+    _restaurantSubscription = restaurantRepository
+        .getRestaurant(userId)
+        .listen(
+          (restaurant) {
+            emit(state.copyWith(restaurant: restaurant, isLoading: false));
+          },
+
+          onError: (error) {
+            emit(state.copyWith(isLoading: false, errMsg: error.toString()));
+          },
+        );
+  }
+
+  void resetState() {
+    emit(RestaurantState.initial());
+  }
+
+  @override
+  Future<void> close() {
+    _restaurantSubscription?.cancel();
+
+    return super.close();
   }
 }
