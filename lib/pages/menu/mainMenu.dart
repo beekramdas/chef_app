@@ -1,6 +1,8 @@
+import 'package:chef_app/cubits/auth/auth_cubit.dart';
 import 'package:chef_app/pages/menu/userReviews.dart';
 import 'package:chef_app/pages/menu/withdrawSuccessfull.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class MainMenu extends StatefulWidget {
@@ -305,6 +307,7 @@ class _MainMenuState extends State<MainMenu> {
                           ),
                         );
                       },
+
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 15,
@@ -347,44 +350,54 @@ class _MainMenuState extends State<MainMenu> {
                         ),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 15,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Color(0XFBF6F6F6),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          spacing: 10,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 14,
+
+                    ////------------>Logout---------->
+                    InkWell(
+                      onTap: () {
+                        context.read<AuthCubit>().signOut();
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 15,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0XFBF6F6F6),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            spacing: 10,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 14,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/menu/Logout.svg",
+                                ),
                               ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
+                              Text(
+                                "Log Out",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Color(0XFB333333),
+                                ),
                               ),
-                              child: SvgPicture.asset("assets/menu/Logout.svg"),
-                            ),
-                            Text(
-                              "Log Out",
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Color(0XFB333333),
+                              Spacer(),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Color(0XFB747783),
                               ),
-                            ),
-                            Spacer(),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: Color(0XFB747783),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

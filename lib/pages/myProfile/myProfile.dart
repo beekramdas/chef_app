@@ -10,6 +10,8 @@ class Myprofile extends StatefulWidget {
 class _MyprofileState extends State<Myprofile> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text("MY PROFILE PAGE")));
+    return SafeArea(
+      child: Scaffold(body: Center(child: Text("MY PROFILE PAGE"))),
+    );
   }
 }

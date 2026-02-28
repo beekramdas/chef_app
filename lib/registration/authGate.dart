@@ -2,10 +2,9 @@ import 'package:chef_app/cubits/restaurant/restaurant_cubit.dart';
 import 'package:chef_app/indexPage.dart';
 import 'package:chef_app/registration/login.dart';
 import 'package:chef_app/registration/restaurant_register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../cubits/auth/auth_cubit.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
@@ -16,40 +15,42 @@ class AuthGate extends StatefulWidget {
 
 class _AuthGateState extends State<AuthGate> {
   @override
+  void initState() {
+    super.initState();
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      context.read<RestaurantCubit>().getRestaurant(user.uid);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, AuthState>(
-      /// LISTENER → Trigger Restaurant Load
-      listener: (context, authState) {
-        if (authState.authStatus == AuthStatus.authenticated) {
-          context.read<RestaurantCubit>().getRestaurant(authState.user!.id);
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return LoginPage();
+    }
+
+    return BlocConsumer<RestaurantCubit, RestaurantState>(
+      listener: (context, state) {},
+
+      builder: (context, state) {
+        /// Loading
+        if (state.isLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         }
-      },
 
-      /// BUILDER → Show Screens
-      builder: (context, authState) {
-        /// Not Logged In
-        if (authState.authStatus == AuthStatus.unauthenticated) {
-          return const LoginPage();
+        /// Restaurant NOT exist
+        if (state.restaurant == null) {
+          return const RestaurantRegister();
         }
 
-        /// Logged In → Check Restaurant
-        return BlocBuilder<RestaurantCubit, RestaurantState>(
-          builder: (context, restaurantState) {
-            if (restaurantState.isLoading) {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              );
-            }
-
-            /// No Restaurant → Register
-            if (restaurantState.restaurant == null) {
-              return const RestaurantRegister();
-            }
-
-            /// Restaurant Exists → Home
-            return const IndexPage();
-          },
-        );
+        /// Restaurant Exist
+        return IndexPage();
       },
     );
   }

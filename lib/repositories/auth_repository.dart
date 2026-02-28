@@ -17,18 +17,36 @@ class AuthRepository {
   Future<UserModelR> signUp({
     required String name,
     required String email,
-    required password,
+    required String password,
   }) async {
-    final credential = await firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    UserCredential credential;
+
+    try {
+      /// Try login first (if account already exists in User App)
+      credential = await firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      /// If account does not exist → create new
+      if (e.code == 'user-not-found') {
+        credential = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      } else {
+        rethrow;
+      }
+    }
     final user = credential.user!;
     final userModelR = UserModelR(id: user.uid, name: name, email: email);
+
+    /// Save chef user in RestaurantUsers collection
     await firebaseFirestore
         .collection("RestaurantUsers")
         .doc(user.uid)
         .set(userModelR.toMap());
+
     return userModelR;
   }
 
