@@ -1,56 +1,37 @@
-import 'package:chef_app/cubits/restaurant/restaurant_cubit.dart';
-import 'package:chef_app/indexPage.dart';
-import 'package:chef_app/registration/login.dart';
-import 'package:chef_app/registration/restaurant_register.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AuthGate extends StatefulWidget {
+import '../cubits/auth/auth_cubit.dart';
+import '../indexPage.dart';
+import '../registration/restaurant_register.dart';
+import 'login.dart';
+
+class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
   @override
-  State<AuthGate> createState() => _AuthGateState();
-}
-
-class _AuthGateState extends State<AuthGate> {
-  @override
-  void initState() {
-    super.initState();
-
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      context.read<RestaurantCubit>().getRestaurant(user.uid);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) {
-      return LoginPage();
-    }
-
-    return BlocConsumer<RestaurantCubit, RestaurantState>(
-      listener: (context, state) {},
-
+    return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
-        /// Loading
-        if (state.isLoading) {
+        if (state.isLoading || state.authStatus == AuthStatus.unknown) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        /// Restaurant NOT exist
-        if (state.restaurant == null) {
+        if (state.authStatus == AuthStatus.unauthenticated) {
+          return const LoginPage();
+        }
+
+        if (state.authStatus == AuthStatus.restaurantNotRegistered) {
           return const RestaurantRegister();
         }
 
-        /// Restaurant Exist
-        return IndexPage();
+        if (state.authStatus == AuthStatus.authenticated) {
+          return const IndexPage();
+        }
+
+        return const LoginPage();
       },
     );
   }

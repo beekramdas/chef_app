@@ -413,13 +413,17 @@ class _RestaurantRegisterState extends State<RestaurantRegister> {
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: Center(
-                              child: Text(
-                                "SAVE ",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
+                              child: state.isLoading
+                                  ? CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : Text(
+                                      "SAVE ",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),

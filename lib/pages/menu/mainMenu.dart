@@ -13,6 +13,11 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
+  void logout() async {
+    await context.read<AuthCubit>().signOut();
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -352,11 +357,8 @@ class _MainMenuState extends State<MainMenu> {
                     ),
 
                     ////------------>Logout---------->
-                    InkWell(
-                      onTap: () {
-                        context.read<AuthCubit>().signOut();
-                        Navigator.pop(context);
-                      },
+                    GestureDetector(
+                      onTap: logout,
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 15,

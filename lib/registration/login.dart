@@ -1,5 +1,3 @@
-import 'package:chef_app/indexPage.dart';
-import 'package:chef_app/registration/restaurant_register.dart';
 import 'package:chef_app/registration/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,14 +20,17 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
-  void login() {
+  void login() async {
     setState(() {
       _autovalidateMode = AutovalidateMode.always;
     });
     final form = _formKey.currentState;
     if (form == null || !form.validate()) return;
     form.save();
-    context.read<AuthCubit>().signIn(email: _email!, password: _password!);
+    await context.read<AuthCubit>().signIn(
+      email: _email!.trim(),
+      password: _password!,
+    );
   }
 
   @override
@@ -42,19 +43,6 @@ class _LoginPageState extends State<LoginPage> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
-            if (state.authStatus == AuthStatus.authenticated) {
-              if (state.restaurantExists) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => IndexPage()),
-                );
-              } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => RestaurantRegister()),
-                );
-              }
-            }
             if (state.errorMessage != null) {
               showDialog(
                 context: context,
@@ -212,6 +200,11 @@ class _LoginPageState extends State<LoginPage> {
                                         return "Password must be 6 character long";
                                       }
                                     },
+                                    onChanged: (_) {
+                                      if (state.errorMessage != null) {
+                                        context.read<AuthCubit>().clearError();
+                                      }
+                                    },
                                     onSaved: (String? value) {
                                       _password = value;
                                     },
@@ -282,7 +275,7 @@ class _LoginPageState extends State<LoginPage> {
 
                                   ///------------------LOGIN----------
                                   child: GestureDetector(
-                                    onTap: login,
+                                    onTap: state.isLoading ? null : login,
                                     child: Container(
                                       height: 62,
                                       width: double.maxFinite,
